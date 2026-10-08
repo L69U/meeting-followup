@@ -1,0 +1,34 @@
+name: MeetingFollowup
+options:
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  MeetingFollowup:
+    type: application
+    platform: iOS
+    sources: [Sources]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.meetingfollowup
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: 会后跟进
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+  MeetingFollowupTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests]
+    dependencies:
+      - target: MeetingFollowup
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  MeetingFollowup:
+    build:
+      targets:
+        MeetingFollowup: all
+    test:
+      targets: [MeetingFollowupTests]

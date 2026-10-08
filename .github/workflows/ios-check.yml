@@ -1,0 +1,41 @@
+name: iOS simulator verification
+
+# Manual only: no paid runner is started merely by pushing this project.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show toolchain
+        run: xcodebuild -version
+      - name: Install project generator
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+      - name: Select available iPhone simulator
+        run: python3 scripts/select_simulator.py
+      - name: Compile and run model tests
+        working-directory: ios
+        run: >-
+          xcodebuild test
+          -project MeetingFollowup.xcodeproj
+          -scheme MeetingFollowup
+          -destination "platform=iOS Simulator,id=$SIMULATOR_ID"
+          -resultBundlePath ../TestResults.xcresult
+          CODE_SIGNING_ALLOWED=NO
+      - name: Save test result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-results
+          path: TestResults.xcresult
+          if-no-files-found: ignore
+          retention-days: 7
